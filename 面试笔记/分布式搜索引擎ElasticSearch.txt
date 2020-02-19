@@ -1,0 +1,30 @@
+Elasticsearch是一个实时的分布式搜索和分析引擎。它可以帮助你用前所未有的速度去处理大规模数据。ElasticSearch是一个基于Lucene的搜索服务器。它提供了一个分布式多用户能力的全文搜索引擎，基于RESTful web接口。Elasticsearch是用Java开发的，并作为Apache许可条款下的开放源码发布，是当前流行的企业级搜索引擎。设计用于云计算中，能够达到实时搜索，稳定，可靠，快速，安装使用方便。
+
+
+ik分词器：
+1、ik_max_word
+
+会将文本做最细粒度的拆分，比如会将“中华人民共和国人民大会堂”拆分为“中华人民共和国、中华人民、中华、华人、人民共和国、人民、共和国、大会堂、大会、会堂等词语。
+
+2、ik_smart
+会做最粗粒度的拆分，比如会将“中华人民共和国人民大会堂”拆分为中华人民共和国、人民大会堂。
+
+
+
+localhost:9200/_analyze?analyzer=chinese&pretty=true&text=我是程序员     //不使用分词器
+localhost:9200/_analyze?analyzer=ik_smart&pretty=true&text=我是程序员   
+localhost:9200/_analyze?analyzer=ik_max_word&pretty=true&text=我是程序员   
+
+
+
+
+pojo类上添加
+@Document(indexName = "索引名（需先创建）" , type = "类型名（可不先创建）")
+
+
+
+属性上添加
+//是否索引，就是看该域是否能被搜索
+//是否分词，就表示搜索的时候是整体匹配还是单词匹配
+//是否存储，就是是否在页面上显示
+@Field( index = true,analyzer = "ik_max_word"(分词存储), searchAnalyzer = "ik_max_word"(分词查询))

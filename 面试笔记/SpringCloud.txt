@@ -1,0 +1,271 @@
+微服务面试题：
+
+1.什么是微服务？
+答：微服务核心就是将传统的一站式应用，根据业务拆分成一个个的服务，彻底地去耦合，每一个微服务提供单个业务功能的服务，一个服务做一件事，从技术角度看就是一种小而独立的处理过程，类似进程，能够自行单独启动或销毁，拥有自己独立的数据库
+2.微服务之间是如何通讯的？
+答：微服务的通信机制是基于http的RESTful API
+3.微服务和springCloud和Dubbo有哪些区别？
+答：1）通信机制：
+	微服务的通信机制是基于http的RESTful API
+	dubbo是基于RPC远程过程调用;
+	springcloud是基于REST调用;
+
+4.SpringBoot和SpringCloud，请你谈谈对他们的理解
+5.什么是服务熔断？什么是服务降级？
+6.微服务的优缺点分别是什么？说下你在项目中碰到的坑
+答：
+优点：
+每个服务足够内聚，足够小，代码容易理解这样能聚焦一个指定的业务功能或业务需求
+开发简单，开发效率提供，一个服务可能就是专一的只干一件事
+微服务能够被小团队单独开发，这个小团是2到5人的开发人员组成
+微服务是松耦合的，是有功能意义的服务，无论是在开发阶段或部署阶段都是独立的
+微服务能使用不同语言开发。
+易于与第三方集成，微服务允许容易且灵活的方式集成自动部署，通过持续集成工具，如Jenkins，Hudson，bamboo
+微服务易于被开发人员理解，修改和维护，
+微服务允许你利用融合最新技术
+微服务知识业务逻辑的代码，不会和HTML，CSS或其他界面混合
+每个微服务都有自己的存储能力，可以有自己的数据库，也可以有统一数据库
+缺点：
+分布式系统复杂性
+多服务运维难度，随着服务的增加，运维压力也增大
+系统部署依赖
+服务间通信成本
+数据一致性
+系统集成测试
+性能监控
+7.你所知道的微服务技术栈有哪些？列举一二
+答：
+8.eureka和zookeeper都可以提供服务注册与发现的功能，请说说两个的区别？
+9.SpringCloud和SpringBoot是什么关系？
+答：
+SpringBoot专注于快速方便的开发单个个体微服务
+SpringCloud是关注全局的微服务协调整理治理框架，它将SpringBoot开发的一个个单体微服务整合并管理起来，为各个微服务之间提供，配置管理，服务发现，断路器，路由，微代理，事件总线，全局锁，决策竞选，分布式会话等集成服务
+SpringBoot可以离开SpringCloud独立开发项目，而SpringCloud离不开SpringBoot，属于依赖关系
+SpringBoot专注于快速方便的开发单个个体微服务，SpringCloud是关注全局的服务治理框架
+
+
+
+RestTemplate：
+RestTemplate提供了多种便携访问远程HTTP服务的方法
+是一种简单便携的访问restful服务模板类，是Spring提供的用于访问Rest服务的客户端模板工具类
+(url,requestMap,ResponseBean.class) 这三个参数分别代表
+REST请求地址，请求参数，HTTP响应转换被转换成的对象类型
+
+
+
+一.Eureka：C-S结构，client，server       AP原则（A可用性，P分区容忍性）       Zookeeper：CP（C强一致性，P分区容忍性）
+服务发现与注册，只需要使用服务的标识符，就可以访问到服务，而不需要修改服务调用的配置文件
+
+默认情况下，如果eurekaServer在一定时间内没有接受到某个微服务实例的心跳，eurekaServer将会注销该实例（默认90秒）但是当eurekaServer节点在短时间内丢失过多客户端（可能发生了网络分区故障（15分钟内超过85%节点没有心跳）），节点就会进入自我保护机制（某时刻某微服务不可用了，eureka不会立刻清理，依旧会对该服务的信息保存，当接受的心跳重新恢复到阈值以上，eurekaServer就会自动退出自我保护模式）（设计哲学就是宁可保留错误的服务注册信息，也不盲目注销任何可能健康的服务实例）
+可以使用eureka.server.enable-self-preservation = false禁用自我保护模式（一般不变更）
+
+集群修改c:\Windows\System32\drivers\etc\hosts 文件 
+如：
+127.0.0.1 eureka7001.com
+127.0.0.1 eureka7002.com
+127.0.0.1 eureka7003.com
+
+//Eureka Server服务器端启动类，接受其他微服务注册进来
+@EnableEurekaServer
+服务器端：
+eureka:
+  instance:
+    #eureka服务端的实例名称
+    hostname: localhost
+    #集群下eureka服务端的实例名称
+    hostname: eureka7001.com
+  client:
+    #false表示不向注册中心注册自己
+    register-with-eureka: false
+    #falseb表示自己端就是注册中心，我的职责就是维护服务实例，并不需要去检索服务
+    fetch-registry: false
+    service-url:
+      #设置与Eureka Server交互的地址，查询服务和注册服务都需要依赖这个地址
+      #单机下
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+      #集群下,其他两个一样，分别携带另外两个
+      defaultZone: http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
+/*
+* 注解@EnableEurekaClient上有@EnableDiscoveryClient注解
+* 可以说基本就是EnableEurekaClient有@EnableDiscoveryClient的功能
+* 其实@EnableEurekaClientz注解就是一种方便使用eureka的注解而已
+* 可以说使用其他的注册中心后，都可以使用@EnableDiscoveryClient注解
+* 但是使用@EnableEurekaClient的情景，就是在服务采用eureka作为注册中心的时候，使用场景较为单一。
+*/
+// @EnableDiscoveryClient和@EnableEurekaClient共同点就是
+// 都是能够让注册中心能够发现，扫描到改服务
+客户端：
+spring:
+  application:
+    #微服务名称
+    name: microservicecloud-dept
+eureka:
+  client:
+    #将客户端注册到eureka服务列表内
+    service-url:
+      #单机下
+     #defaultZone: http://localhost:7001/eureka
+      #集群下
+      defaultZone: http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka,http://eureka7003.com:7003/eureka
+  instance:
+    #自定义服务名称信息
+    instance-id: microservicecloud-dept8001
+    #访问路径可以显示IP地址
+    prefer-ip-address: true
+
+
+升级前 => 升级后
+
+Spring Boot 1.5.x => Spring Boot 2.0.2
+
+Spring Cloud Edgware SR4 => Spring Cloud Finchley.RELEASE
+
+Eureka Server Eureka Server 依赖更新  升级前：  
+
+<dependency>     
+	<groupId>org.springframework.cloud</groupId>     
+	<artifactId>spring-cloud-starter-eureka-server</artifactId> 
+</dependency> 
+
+升级后：  
+
+<dependency>     
+	<groupId>org.springframework.cloud</groupId>     
+	<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId> 
+</dependency> 
+
+Eureka Client 因为配置中心需要作为服务注册到注册中心，所以需要升级 Eureka Client，其他依赖没有变动。 
+ Eureka Client 依赖更新  升级前：  
+
+<dependency>     
+	<groupId>org.springframework.cloud</groupId>     
+	<artifactId>spring-cloud-starter-eureka</artifactId> 
+</dependency> 
+
+升级后： 
+ <dependency>     
+	<groupId>org.springframework.cloud</groupId>    
+	 <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+ </dependency>
+
+
+二.Ribbon：是基于Netflix Ribbon实现的一套客户端 负载均衡的工具，主要功能提供客户端的软件负载均衡算法，将Netflix的中间层服务连接一起。Ribbon客户端组件提供一系列完善的配置项，如连接超时，重试等。就是在配置文件中列出Load Balancer（LB）后面所有的机器，Ribbon会自动帮助你基于某种规则（如简单轮询（默认），随机连接等）去连接这些机器
+
+Ribbon核心组件IRule：负载均衡算法
+
+Feign：是一个声明式WebService客户端。使用Feign能编写WebService客户端更加简单，它使用方法使定义一个接口，然后再上面添加注解，同时也支持JAX-RS标准的注解，Feign也支持可拔插式的编码器和解码器。SpringCloud对Feign进行了封装，使其支持了SpringMVC标准注解和HttpMessageConverters。Feign可以与Eureka和Ribbon组合使用以支持负载均衡
+
+三.Feign通过接口的方法调用Rest服务，该请求发送给Eureka服务器，通过Feign直接找到服务接口，由于再进行服务调用的时候融合了Ribbon技术，所以也支持负载均衡作用
+
+
+四.Hystrix断路器：向调用方返回一个符合预期的，可处理的备选响应（FallBack），而不是长时间的等待或者抛出调用方无法处理的异常
+（会进行服务的降级，进而熔断该节点微服务的调用，快速返回“错误”的响应信息）
+
+服务熔断：  provider   微服务完成，（微服务出现异常或故障，服务不可用，直接熔断整个服务，不用等到服务超时）
+写在provider里Controller
+@HystrixCommand(fallbackMethod = "方法名")：
+一旦调用服务方法失败并抛出错误信息后，会自动调用@HystrixCommand标注好的fallbackMethod调用类中的方法
+
+写在provider启动类
+//开启对hystrix熔断机制的支持
+@EnableCircuitBreaker
+
+
+服务降级：  consumer  客户端完成，（整体资源不够用，暂时关闭服务器，直接准备一个本地的fallback回调方法，返回一个缺省值）可以停止微服务
+consumer里新建类实现FallbackFactory<（Feign针对的provider实现负载均衡策略的类）> 重写 create方法 
+return new (Feign针对的provider实现负载均衡策略的类){ 方法 }
+consumer 的.yml 添加
+feign:
+  hystrix:
+    enabled: true
+
+服务监控hystrixDashboard：
+准实时的调用监控，hystrix会持续地记录所有通过Hystrix发起地请求地执行信息，并以统计报表和图像地形式展示给用户，包括每秒执行多少，请求多少，成功多少，失败多少等。
+Netflix通过hystrix-metrics-event-stream项目实现了对以上指控地监控。SpringCloud也提供了HystrixDashboard的整合，对监控内容转化成可视化界面。
+//开启HystrixDashboard服务监控
+@EnableHystrixDashboard
+ //运行  localhost:9001/hystrix
+
+五.Zuul：
+包含对请求的路由和过滤两个最主要功能
+启动类添加注解
+//开启Zuul路由代理
+@EnableZuulProxy
+
+如有一个服务名是microservicecloud-dept。zuul有默认路由规则，会默认以/microservicecloud-dept/** 作为path
+ignore-services：设置一个服务名匹配表达式来定义 不自动创建路由的规则
+路由：
+之前访问
+	http://127.0.0.1:9527/microservicecloud-dept/dept/get/2
+yml加上：
+zuul:
+  //设置统一公共前缀
+  prefix: /test
+  //防止真实路径暴露，封住不让访问（单个具体写，多个可用 ignored-services: "*" ）
+  ignored-services: microservicecloud-dept
+  routes:
+    //路径映射
+    mydept.serviceId: microservicecloud-dept
+    mydept.path: /mydept/**
+
+
+现在访问
+	http://127.0.0.1:9527/mydept/dept/get/2
+
+
+
+
+六. SpringCloud Config:
+为微服务架构中的微服务提供集中化的外部配置支持，配置服务器为各个不同微服务应用的所有环境提供了一个中心化的外部配置
+分为（服务端，客户端）
+服务端也称分布式配置中心，它是个独立的微服务应用，用来连接配置服务器并为客户端提供获取配置信息，加密/解密信息等
+客户端时通过指定的配置中心来管理应用资源，以及与业务相关的配置内容，并在启动的时候从配置中心获取和加载配置信息，配置服务器默认采用git来存储配置信息
+
+优点：
+1）能集中管理配置文件
+2）不同环境不同配置，动态化配置更新
+3）运行期间动态调整配置，不再需要在每个服务部署配置文件，服务会统一向配置中心拉取自己的配置信息
+4）当配置发生改动，服务不需要重启，即可感知到配置的变化并应用新的配置
+5）将配置信息以REST接口形式暴露
+
+服务端：
+spring: 
+  profiles: 
+    active: 
+    - dev
+---
+spring:
+  profiles: dev        #开发环境
+  application:
+    name: microservicecloud-config-dev
+---
+spring:
+  profiles: test        #测试环境
+  application:
+    name: microservicecloud-config-test
+# 请保存为UTF-8格式
+
+//开启服务端配置
+@EnableConfigServer
+
+
+三种访问yml方式：
+1） /{application(文件名字)}-{profile(环境)}.yml
+2） /{application}/{profile}/{label(分支)}
+3）/{label}/{application}/{profile}
+
+客户端：
+application.yml 是用户级的资源配置项
+bootstrap.yml是系统级的，优先级更加高
+
+SpringCloud 会创建一个BoostrapContext,作为Spring应用的ApplicationContext的父上下文。初始化时，BoostrapContext负责从外部源加载配置属性并解析配置。这两个上下文共享一个从外部获取的Environment。Bootstrap属性有高优先级，默认情况，它们不会被本地配置覆盖。BootstrapContext和ApplicationContext有着不同的约定。所以新增一个bootstrap.yml文件，保证BootstrapContext和ApplicationContext配置分离
+
+bootstrap.yml配置：
+spring:
+  cloud:
+    config:
+      name: microservicecloud-config-client   #需要从github上读取的资源名称，注意没有yml后缀
+      profile: dev	#本次访问环境
+      label: master
+      uri: http://config-3344.com:3344	#微服务启动后先去找3344号服务，通过SpringCloudConfig获取GitHub服务地址
+      search-paths: application_config        #github放置的文件夹，没有可以不写

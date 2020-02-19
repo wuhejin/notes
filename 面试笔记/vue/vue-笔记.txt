@@ -1,0 +1,456 @@
+
+//vue自动提示
+File->setting->Inspections，右侧找到Html->Unknown HTML tag attribute，在右边Options->Custom HTML tag attributes里面添加如下代码
+@tap,@tap.stop,@tap.prevent,@tap.once,@click,@click.stop,@click.prevent,@click.once,@change,@change.lazy,@change.number,@change.trim,v-model,v-for,v-text,v-html,v-if,v-else-if,v-else,v-pre,v-once,v-bind,scoped,@keyup.enter,:class,:style,v-show,:key,@keyup,@submit,@submit.prevent,@mouseenter,@mouseleave,
+@mouseout,@mouseover
+File->setting->File Types里面找到HTML,在Registered Patterns里面添加*.vue即可，如图所示
+
+
+//ES5中的var是没有块级作用域的（if/for）
+//ES6中的let是有块级作用域的（if/for）
+
+//属性的增强写法
+name='whj'
+age=18
+height=1.88
+//ES5写法
+const obj ={
+	name:name,
+	age:age,
+	height:height
+}
+//ES6写法
+const obj = {
+	name,
+	age,
+	height
+}
+
+//函数的增强写法
+//ES5
+const obj = {
+	run:function(){}
+}
+//ES6
+const obj = {
+	run(){}
+}
+
+
+
+//let(变量)//const(常量)
+const div = new Vue({
+	
+})
+
+const div = new Vue({
+        //对象
+        el:'#div',
+        //数据
+        data:{
+            message:'Hello Word',
+            movie:['1','2','3'],
+            counter:0,
+            url:"<a href='http://www.baidu.com'>百度一下</a>"
+        },
+	//计算属性
+        computed：{
+	fullName: function(){
+		return "";
+		}
+	}，
+        //方法
+        methods:{
+            add:function () {
+                console.log("++");
+                div.counter++;
+            },
+            sub:function () {
+                console.log("--");
+                div.counter--;
+            }
+        }，
+	//生命周期函数
+	//过滤器
+         filters:{
+	showPrice(price){
+	return '';
+}
+	}
+    })
+//过滤器写法
+{{item.price | showPrice}} 会自动把item.price传入showPrice(price)里
+//computed计算属性和methods方法的区别，计算属性只调用一次，方法调用几次就几次，没有缓存，性能低
+
+
+{{}}Mustache语法
+// v-on:click="add" 点击调用 add方法 语法糖写法 @click 方法无参数可以不加()
+//方法有参数， @click="add()"，参数未定义； @click="add"，传入一个浏览器生成的event参数
+@click="add('a',$event)" 传入两个参数，一个a，一个浏览器生成的event  a没有加''，表示一个变量，数字还是数字
+
+// v-on:input='fcuntion' input框里每输入，事实改变  可以传入一个浏览器生成的event ，this.message = even.target.value;
+
+<div @click="">
+	<div @click.stop=""></div>
+</div>
+//事件冒泡，修饰符.stop可以阻止事件冒泡
+
+<from action="">
+	<input type="submit" value="提交" @click.prevent="">
+</from>
+//阻止默认事件，.prevent，自己写方法提交
+
+//键帽的监听
+@keyup 松开键帽 @keydown 按下键帽 
+//修饰符 @keyup.enter 监听回车
+
+// @click.native 监听自己写的新标签
+// @click.once 只监听一次，只触发一次回调
+
+// v-if="boolean"
+// v-else-if=" "   不推荐
+// v-else           boolean为false触发
+//切换类型复用问题，添加key，key不同，值就不传递，key相同，值传过来，如
+两个input，按钮监听来回切换，就是复用问题，vue检测到相同input，不会去重新创建元素，只是改变了里面一些不同
+
+//v-show 和 v-if的区别，v-if条件false，不会有元素出现在DOM里；v-show条件false，仅仅将元素的display属性设置none
+
+// v-once 只渲染一次，后面都改变不了
+// v-for="item in movie" 遍历movie数组赋给item  v-for="(item,index) in movie" 遍历movie赋给item，下标赋给index
+// v-for="(value,key) in a" 遍历对象，返回value值，key为属性名
+// v-for="(value,key,index) in a" 遍历对象，返回value值，key为属性名,index为顺序
+// v-for="item in movie" :key="item" 绑定key 提高dom性能
+
+function sum(...num){}  
+...：表示可变参数，传入后变为数组
+
+数组做到响应式的方法有
+1.push()：添加数组到最后一个元素，响应式，可以添加多个
+2.pop()：删除数组最后一个元素，响应式
+3.shift()：删除数组第一个元素，响应式
+4.unshift()：添加数组到第一个元素，响应式
+5.splice(start,num)：响应式，删除元素，插入元素，替换元素，第一个参数start，代表从那个位置开始；
+删除元素 ：第二个参数num代表删除几个元素（如果没用传参，表示删除start开始的全部元素）
+替换元素：splice（start，num，... n)删除start开始的num个元素，，然后插入可变元素
+插入元素：splice（start，0，...n）插入start开始的可变元素
+6.sort()：排序数组，响应式
+7.reverse()：反转数组，响应式
+//vue内部方法  Vue.set(要修改的对象，索引值，修改后的值)
+
+//注意，通过索引修改数组元素，不是响应式，数组变化了，页面并没有改变：原因是因为vue内部没有监听这种方式改变数组
+this.array[i] = '1111';
+
+
+// v-html="url" 返回url的标签
+// v-test="message" 返回message的值，不灵活，一般不用，直接用{{message}}
+// v-pre 内容不解析，直接显示
+// v-cloak 解析前有这个属性，解析后取消改属性  css样式[v-cloak]}{ display:none;}
+// v-bind: 动态绑定的的数据 如 <img v-bind:src="imageurl"> 语法糖写法 <img :src="imageurl">
+// v-bind:class="{类1:boolean, 类2:boolean}" 动态绑定是否需要该类对象 里面也可以写方法 test()，数组['active',active]，加上'字符串解析，不加直接解析属性
+
+
+//filter/map/reduce 高阶函数
+//1.filter中的回调函数(callbackfn)：必须返回一个boolean值，当返回值为true，函数内部会将回调的n加入新的数组，当返回值为false，函数内部会过滤掉该n，filter过滤数组
+//取出小于100的数
+const nums = [10,20,30,40,50,444,333,111];
+let newNums = nums.filter(function(n){
+	return n < 100;
+})
+
+//2.map函数:返回值重新放入新数组，map映射成新数组
+let new2Nums = newNums.map(function(n){
+	return n*2;
+})
+//3.reduce函数:作用就是对数组中所有内容进行汇总,可以传两个或一个参数，第二个参数表示对pre初始化值
+let total = new2Nums.reduce(function(pre,n){
+	return pre+n;	
+},0);
+//链式操作,函数式编程
+let total = nums.filter(funciton(n){
+return n < 100
+})
+.map(function(n){
+return n*2
+})
+.reduce(function(pre,n){
+return pre + n
+},0)
+//链式操作，箭头函数
+let total = nums.filter(n => n < 100).map(n => n * 2).reduce((pre,n) = > pre + n,0);
+
+// v-model 实现 表单和数据双向绑定 ,其实是一个语法糖，背后包含两个操作：1.v-bind绑定一个value属性，2.v-on指给当前元素绑定input事件
+<input type="text" v-model="message">等同于
+<input type="text" v-bind:value="message" v-on:input="message = $event.target.value">
+//v-model:radio
+在v-model时，可以不添加name，就能实现互斥，v-model="sex" ，数据中保存哪个单选框的value，就哪个被选中
+//v-model:checkbox
+v-model="isA"   checkbox单选框对应boolean类型  数据中 isA:false ,默认未选中，选中，isA值改为true
+v-model="hobby"      checkbox多选框对应数组类型 ,选中，数组hobby就添加元素
+//v-model:select  单选v-model写在select，选中对应value
+//v-model:select 选择多个 添加属性multiple ，选中放入对应的数组中
+//修饰符
+//v-model.lazy 失去焦点或回车才会改变
+//v-model.number  v-model默认绑定都会改变成string类型，需要number类型，就需要.number修饰符
+//v-model.trim  去除前后的空格
+
+//值绑定，value不写死，动态改变
+
+
+//组件
+//1.创建组件
+ES6支持``写字符串
+const cpnC = Vue.extend({
+	template:`
+	<div>
+		<h1>hello</h1>
+	</div>
+	`
+})
+2.注册组件
+Vue.component(标签的命名,cpnC)
+3.使用组件  必须放在vue实例中才能使用  <标签的命名></标签的命名>
+全局组件：可以在多个vue实例中使用，
+局部组件：
+const app = new Vue({
+	el:'#app',
+	data: {},
+	//局部组件，cpn为标签命名，cpnC为传入的组件
+	components:{
+	'cpn':cpnC
+},
+})
+
+//组件的语法糖注册方式
+注册全局组件语法糖
+Vue.component(标签的命名,{
+	template:`
+	<div>***</div>
+	`
+})
+注册局部组件语法糖
+const app = new Vue({
+	el:'#app',
+	data: {},
+	//局部组件，cpn为标签命名，cpnC为传入的组件
+	components:{
+	'cpn':{
+	template:`
+	<div>***</div>
+	`
+	}
+},
+})
+
+//组件模板分离（scipr标签）
+<script type="text/x-template" id="cpn">
+<div>
+<h2>hello</h2>
+</div>
+</script>
+//组件模板分离（template标签）
+<template id="cpn">
+<div>
+<h2>hello</h2>
+</div>
+</template>
+
+通过id直接使用
+Vue.component('cpn',{template:'#cpn'});
+
+//组件有自己data属性，只是这个属性是一个函数，这个函数返回一个对象，对象内部保存数据
+为什么必须时一个函数：组件的data都不是同一个对象，每个组件都有组件的实例，所以每个组件都是独立的
+Vue.component('cpn',{
+template:'#cpn'，
+data(){
+	return {
+		message:'aaa'
+	}
+}
+});
+//父组件向子组件传递数据
+子组件添加
+props:['cmovie']  props选项选用是一个数组，也可以支持其他数据类型：String,Number,Boolean,Array,Object,Date,Function,Symbol 
+可以换种写法 props:{cmovie:Array,},要求传入一个数组
+props:[String,Number] 多个数据类型
+props:{
+cmessage:{
+	type:String,
+	default:'aaaaa' //默认值
+	required:true       //true表示在用到这个属性时，一定要传递数据进来，不然就报错
+}}
+类型为对象或数组时，默认值必须是一个函数
+default(){
+	//return {}
+	//return []
+}
+props:{
+	test:{
+				//自定义验证函数，表示传入下列字符串中任意一个，不然报错
+		validator:function(value){
+		return ['index','success','false'].indexOf(value) !== -1
+		}
+	}
+}
+<cpn :cmovie="movie"></cpn> 把父组件的movie传给子组件的cmovie
+//子组件向父组件传数据（通过自定义事件传递 $emit()）
+一般点击事件，在方法中写this.$emit("事件的名字",传入的对象),
+父组件用 :事件名字="父组件方法"    父组件方法要写个参数，用于获取传入的对象，在标签处可以忽略不写，默认传入子组件传过来的对象
+1)在子组件中，通过$emit()来触发事件，2)在父组件中，通过v-on来监听子组件事件
+
+组件内的属性 watch，表示该数据改变了，就会调用watch里的方法
+
+1.父组件通过 $children可以获得子组件数组
+****2.父组件通过 $refs.名字 可以获取指定子组件 (需添加 ref="名字") 
+$refs  =>是一个对象类型，默认是一个空的对象
+
+2.子组件通过 $parent 可以获取父组件，通过 $root可以直接访问到根组件（vue实例）
+
+
+1.
+//组件里预留给需求空间就需要<slot>里面可以放也可以不放（放了东西，父组件没有需求就会显示你放的东西）</slot>
+//定义<slot>标签，往子组件里放入需要的东西就行，如：<cpn><button></cpn>就会往插槽放入按钮
+2.
+//具名插槽   指定修改对应插槽，不然全部插槽都改
+<slot name="名字"></slot> 子组件添加name       <cpn><button slot="名字"></cpn>父组件添加 slot属性
+插槽转子组件数据 <slot :命名="子组件的数据名"></slot>  这样父组件可以直接用  
+<div  slot-scope="slot" slot="名字">
+       <span v-for="i in slot.命名">{{i.name}}</span>
+</div>
+
+
+
+CommonJs 导出用 module.exports 	关键字 exports
+	导入用 var {} = require('../js/*.js')	关键字require	node（了解）
+
+
+引入js，添加type="module" 表明是个module，里面数据不冲突
+ es6导出 export {变量，方法名}  导入 import {变量，方法名} from "../js/*.js";
+
+export default   同个模块中只能有一个，让开发者自己命名传过来的参数
+可以通过 import * as aaa from "./js/*.js"  表示全部导入到aaa对象，直接从aaa对象取
+
+
+template(模板)会在内部先转成(解析成)ast(抽象语法树),然后在转成(编译成)render函数，然后形成虚拟dom(virtual dom) ,再转成真实dom()
+template -> ast - > render -> virtual dom - > UI
+runtime-compiler 和 runtime-only区别
+runtime-compiler :  template -> ast - > render -> virtual dom - > UI
+runtime-only: render -> virtual dom - > UI
+runtime-only（1.性能更高2.代码量少）
+
+前端路由        url映射对应得css+js    
+改变前端路由     localhost.hash='' 改变了路由，请求对应得组件，不刷新页面
+	history.pushState({},'',"/路径") 另一种方法，第一个参数传数据(不写)，第二参数传title(不写),第三个传路径
+		上面方法类似栈，入栈
+	history.back() 移除最新页面，返回上一个页面，相当于出栈  等同于 history.go(-1) 表示弹出一个页面，可以弹出多个
+	history.forward() 前进一个页面 等同于 history.go(1)
+	history.replaceState({},'',"/路径")，也是请求路径，但是不能返回，直接替换
+
+前端流行的三大框架 的路由
+Angular的ngRouter
+React的ReactRouter
+Vue的vue-router
+
+vue - router 配置路由和组件的映射关系
+<router-link>:该标签是一个vue-router中已经内置的组件，它会被渲染成一个<a>标签
+to='/路径'属性 ：切换对应路由
+tag='' 渲染成什么标签，默认是a标签
+replace 表示页面使用history.replaceState方法切换路由，表示不能后退
+active-class='' <router-link>对应的路由器匹配成功，会自动给当前元素设置一个router-link-active的class
+可以设置为别的名称
+<router-view>:该标签会根据当前的路径，动态渲染出不同的组件
+再路由切换时，切换的是<router-view>挂载的组件，其他内容不会改变
+
+1.注入插件
+Vue.user(VueRouter)
+2.定义路由
+const routers = [
+	{
+		path:'/home',
+		component:Home
+	},
+	{
+		path:'/about',
+		component:About'
+	}
+]
+3.创建router实例
+const router = new VueRouter({
+	routers,
+	//选择模式(默认是hash)
+	mode: 'history'，
+	//相当于active-class='active'
+	linkActiveClass: 'active'
+})
+导出 router
+export default router
+
+
+传入一个迭代器，数组也是可遍历的
+Promise.all(iterator)
+Promise.all([]).then( results => {
+	console.log(results);//results是一个数组，是需要迭代器里都调用resolve时才会调用then
+})
+
+//引用axios, axios支持promise
+<script src="/js/axios.min.js"></script>
+<script>
+axios({
+	url: '路径',
+	method: '提交的方式' //可不写,
+	//这个是专门针对get请求的参数拼接，相当于路径?参数名=参数值
+	params:{
+		//传入的参数
+		参数名: 参数值
+	},
+	//这个是专门针对post请求的参数拼接
+	data:{
+		//传入的参数
+		参数名: 参数值
+	},
+	//响应数据
+	transformResponse: axios.defaults.transformResponse.concat({
+		data => {
+			//可以将处理数据
+			return data;
+		}
+	})
+	//超时时间 单位毫秒
+	timeout: 5
+})
+</script>
+
+//请求拦截
+    axios.interceptors.request.use(config => {
+        console.log(config);
+        //为什么要拦截
+        //1.比如conifgd中的一些信息不符合服务器要求
+        //2.比如每次发送网络请求时，都希望在界面中显示一个请求图标
+        //3.比如某些网络请求（登陆）（携带token），必须携带一些特殊的信息
+        //拦截后返回
+        return config;
+    },err => {
+        console.log(err);
+    })
+    //响应拦截
+    axios.interceptors.response.use(res => {
+        //返回结果过滤，只取数据
+        return res.data;
+    },err => {
+        return err;
+    })
+
+
+//传入并发请求
+axios.all([axios(),axios()]).then(results => {
+	//得到返回的结果集
+})
+	//可以使用axios.spread将数组展开为res1，res2
+axios.all([axios(),axios()]).then(axios.spread((res1,res2) => {}))
+
+
+//axios实例化
+const axiosInstance = axios.create({
+	baseURL: "路径"
+})
+axiosInstance.get()     //等等
+

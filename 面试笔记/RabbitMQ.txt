@@ -1,0 +1,72 @@
+RabbitMQ 是一个由 Erlang 语言开发的 AMQP 的开源实现。
+
+ 
+
+        AMQP ：Advanced Message Queue，高级消息队列协议。它是应用层协议的一个开放标准，为面向消息的中间件设计，基于此协议的客户端与消息中间件可传递消息，并不受产品、开发语言等条件的限制。
+
+
+2、RabbitMQ的特点
+ 
+
+RabbitMQ最初起源于金融系统，用于在分布式系统中存储转发消息，在易用性、扩展性、高可用性等方面表现不俗。具体特点包括：
+
+ 
+
+        可靠性（Reliability）RabbitMQ 使用一些机制来保证可靠性，如持久化、传输确认、发布确认。
+
+ 
+
+       灵活的路由（Flexible Routing）在消息进入队列之前，通过 Exchange 来路由消息的。对于典型的路由功能，RabbitMQ已经提供了一些内置的 Exchange 来实现。针对更复杂的路由功能，可以将多个Exchange 绑定在一起，也通过插件机制实现自己的 Exchange 。
+
+ 
+
+        消息集群（Clustering）多个 RabbitMQ 服务器可以组成一个集群，形成一个逻辑 Broker 。
+
+ 
+
+        高可用（Highly Available Queues）队列可以在集群中的机器上进行镜像，使得在部分节点出问题的情况下队列仍然可用。
+
+ 
+
+        多种协议（Multi-protocol）RabbitMQ 支持多种消息队列协议，比如 STOMP、MQTT 等等。
+
+ 
+
+        多语言客户端（Many Clients）RabbitMQ 几乎支持所有常用语言，比如 Java、.NET、Ruby 等等。
+
+ 
+
+        管理界面（Management UI）RabbitMQ 提供了一个易用的用户界面，使得用户可以监控和管理消息 Broker 的许多方面。
+
+ 
+
+        跟踪机制（Tracing）如果消息异常，RabbitMQ 提供了消息跟踪机制，使用者可以找出发生了什么。
+
+ 
+
+        插件机制（Plugin System）RabbitMQ 提供了许多插件，来从多方面进行扩展，也可以编写自己的插件。
+
+
+
+
+3.直接模式（Direct 点对点模式）：我们需要将消息发给唯一一个节点时使用这种模式，这是最简单的一种形式。任何发送到Direct Exchange的消息都会被转发到RouteKey中指定的Queue。
+        一般情况可以使用rabbitMQ自带的Exchange：”"(该Exchange的名字为空字符串,下文称其为default Exchange)。
+        这种模式下不需要将Exchange进行任何绑定(binding)操作。
+        消息传递时需要一个“RouteKey”，可以简单的理解为要发送到的队列名字。
+        如果vhost中不存在RouteKey中指定的队列名，则该消息会被抛弃。
+
+4.分列模式（Fanout）：当我们需要将消息一次发给多个队列时，需要使用这种模式，任何发送到Fanout Exchange的消息都会被转发到与该Exchange绑定(Binding)的所有的Queue上。
+	可以理解为路由表的模式。
+	这种模式不需要RouteKey。
+	这种模式需要提前将Exchange与Queue进行绑定，一个Exchange可以绑定多个Queue，一个Queue可以同多个Exchange进行绑定。 如果接受到消息的Exchange没有与任何Queue绑定，则消息会被抛弃。
+
+5.主题模式（Topic）：任何发送到Topic Exchange的消息都会被转发到所有关心RouteKey中指定话题的Queue上。
+        如上图所示此类交换器使得来自不同的源头的消息可以到达一个对列，其实说的更明白一点就是模糊匹配的意思，例如：上图中红色对列的routekey为usa.#，#代表匹配任意字符，但是要想消息能到达此对列，usa.必须匹配后面的#好可以随意。图中usa.news usa.weather,都能找到红色队列，符号 # 匹配一个或多个词，符号 * 匹配不多不少一个词。因此 usa.# 能够匹配到 usa.news.XXX ，但是 usa.* 只会匹配到 usa.XXX 。
+        交换器说到底是一个名称与队列绑定的列表。当消息发布到交换器时，实际上是由你所连接的信道，将消息路由键同交换器上绑定的列表进行比较，最后路由消息。
+        任何发送到Topic Exchange的消息都会被转发到所有关心RouteKey中指定话题的Queue上。
+        这种模式较为复杂，简单来说，就是每个队列都有其关心的主题，所有的消息都带有一个“标题”(RouteKey)，Exchange会将消息转发到所有关注主题能与RouteKey模糊匹配的队列。
+        这种模式需要RouteKey，也许要提前绑定Exchange与Queue。
+        在进行绑定时，要提供一个该队列关心的主题，如“#.log.#”表示该队列关心所有涉及log的消息(一个RouteKey为”MQ.log.error”的消息会被转发到该队列)。
+        “#”表示0个或若干个关键字，“”表示一个关键字。如“log.”能与“log.warn”匹配，无法与“log.warn.timeout”匹配；但是“log.#”能与上述两者匹配。
+        同样，如果Exchange没有发现能够与RouteKey匹配的Queue，则会抛弃此消息
+

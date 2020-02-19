@@ -1,0 +1,38 @@
+server:
+  port: 9018
+#spring:
+#  application:
+#    name: cor-order #指定服务名
+#  datasource:
+#    driverClassName: com.mysql.jdbc.Driver
+#    url: jdbc:mysql://101.37.149.133:3306/tensquare_order?characterEncoding=UTF8
+#    username: root
+#    password: root
+#  jpa:
+#    database: MySQL
+#    show-sql: true
+#  rabbitmq:
+#    host: 101.37.149.133
+#  redis:
+#    host: 101.37.149.133
+
+
+# appid 应用ID,您的APPID，收款账号既是您的APPID对应支付宝账号
+# merchant_private_key 商户私钥，您的PKCS8格式RSA2私钥
+# alipay_public_key 支付宝公钥,查看地址：https://openhome.alipay.com/platform/keyManage.htm 对应APPID下的支付宝公钥。
+# notify_url 服务器异步通知页面路径  需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
+# return_url 页面跳转同步通知页面路径 需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
+# sign_type 签名方式
+# charset 字符编码格式
+# gatewayUrl 支付宝网关  沙箱和正式不同
+# log_path 日志路径
+alipayconfig:
+  app_id: "2016102100730746"
+  merchant_private_key: "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC2bNl2hwmfARtqj/pIJlV28BqcJkx4lnawWTbyJpSpjg0dwg88AiiAPxdu0RFpEwz835kZf4XNsP0D1GtMZmjxUDDx9UbHfVjp3njH8QYhNaEia3a3qS/NHL1QcPDz1mSh2Up16eUN0bTegYjmcLlAtQeu2ixgWGD6Hc/4Oc8mMPQfwQXjKGc6yEuR1LSc2qJONKf8D+d4CvHZBXy/1L4sppggXTtDux98Fst0AEibIXTgNubMRxeBKAR3nQsLYXn6NdSSxYSbcFyL54Q8/xZ31LFRT+SkBzuKH959e3cthI/PuB+8l6D67jbBt8MI4NMN38rvzrfx3UYCONaQvimbAgMBAAECggEASViufreAqMubKFdHPCcdibq0GEBV0s48Xl8gdnAIqbuRjntuAKSlgBrd4xJwO50LRcjpF5VsSO12bUnE8mzimNOzOjVyBddiHnXyfgFsg4G6jcpDa0i9DW0WuPcQChoTT/e7tnkaPVoprKTMVErSUS/4LNdPrFUceLPv4E/t995atTtdDMZ9WkPA6nDRSaege1Gr0KeRZbIk07zAMnTh/KdMqrjSZKTJb4aTgUpxCpO9KwG7R4ztrnMsboCUFMAAfXo1+wVhMbYCThPZZfDnvUbC7UTGhEszAcmvzgHHr+CXw8gCGOEVk5q5VIwO/Q69w3YkpvK4HGcPkq0YkkpTIQKBgQD/Wwj7I5U+vOFX4UqR8hkrXb4gZBQk0xO6AzuZQ8voi3MZo2KiL/FI/j8FHhmzS0d78mmjUN7vmlCfD+HN62tdXLe/6uv/gcIizfJiuh1cg/qalasrhpzv8uRKE1EyO07PO22ChYyIyctYVNJixlpyZZWlcHRJkfvdK0mzRUbHcwKBgQC24rMpgX+DL+p1GLDiCSkqRp4PaVEZgcf1HHFh2a4gowjZqDKlEj3vjd+EgWga91FCmmB8z0mPVmx/waWlQr3ZBU3b3fhzmiAg3q1qyV+fCgl1fxSqajVQf0SUg8xdECFuYjODHGRuv8s1K9kKwPae+ER4umjMsyswM5fD4Fr7OQKBgF5eqmcFs3ZIH492tzRQoHSiZE1cLwWc7EFmSHRP1d/PCW6EL0N5LFapf2jIwv6752MrJ1cv3/P0t67RE8YiJr+OMGpAy47VyYVLTzSlS4yRSeAvR98CFKWowi2ODgfeWzXC5KnD6Tf0O64dStMuMubsG+3ULWWzCb2m7cnO5GV5AoGBAJhNCCjLiBYG5DhpvHwwZtCnCGALM5eLRarw6dc0AVd6jhc8hBiFrYB+ZKKjZb/3L/vINgwaT8cHkMl/yWNrxlAho6ozGwGiW5kj98UTOAdow2HO17XnRsjng4QukhT6Ju0W6JEKJvU30ZFRF6ll8ruGQvdLPZUirBezD3L2tq25AoGAb9F2CkwixEiY//BBcTWctuJ4Ef0g64XJtLLgLG0SyYu/rtQuxsED5x2qO2te1btBzjx0bKp/UKbxcu31mJq1Zgjh6wDVrxhT/llz4vECSHfoFVXkD1cgZOmiKEpQ07q9NO3En802AXd2Mqg5NBHjuoqmgCpsLGJ1BcErqK0pP/g="
+  alipay_public_key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0v28zk6f4r88EnjEidZGcU/FkmbviAxxv8qMzX4fqAuk69N13DOI/6+bIjGrJRSE7jLxQxDL+h7jE25oRpHJgU03z5HFE9xDRhWQ/epCmz8D57Pfpu9Sx5cLEXE4IGF0zynM5U03oaHUwYlQEXIrKJYeKzR9RQXAQcDqlkEncBd4KNsYIaUo90fqDFPYELzHS3VAaQtRbHH4vTi7NzAbGx4slcRW3mHRUwAxrPEZjAUKPmvTUU6ZFkJstDA4oxIta3QIWEX+W41J2nrBKw0zh9rjkHleLGhSoApSrRvpBttKy3wvFdTvxFYjQFcPafN6JTW1i6+IWuTCcg7a6WTWeQIDAQAB"
+  notify_url: "http://qixi.free.idcfengye.com/notify"
+  return_url: "http://qixi.free.idcfengye.com/return"
+  sign_type: "RSA2"
+  charset: "utf-8"
+  gatewayUrl: "https://openapi.alipaydev.com/gateway.do"
+  log_path: "C:\\Users\\use\\Documents\\支付宝开放平台开发助手"

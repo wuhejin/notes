@@ -1,0 +1,151 @@
+package vue.test.vue;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.concurrent.*;
+
+@SpringBootTest
+class VueApplicationTests {
+
+    //1.继承Thread类，重写run方法（其实Thread类本身也实现了Runnable接口）
+    @Test
+    void MyThread() {
+        for (int i = 0; i < 10; i++) {
+            new ExtendsThread().start();
+        }
+        System.out.println(Thread.currentThread().getName());
+    }
+
+    //2.实现Runnable接口，重写run方法
+    @Test
+    void Runnable() {
+        Runnable implRunnable = new ImplRunnable();
+        for (int i = 0; i < 10; i++) {
+            new Thread(implRunnable).start();
+        }
+        System.out.println(Thread.currentThread().getName());
+    }
+
+    //3.实现Callable接口，重写call方法（有返回值）
+    //    自定义类实现Callable接口时，必须指定泛型，该泛型即返回值的类型
+    //　　每次创建一个新的线程，都要创建一个新的Callable接口的实现类、
+    //    　　如何启动线程？
+    //    　　　　（1）创建一个Callable接口的实现类的对象
+    //　　　　    （2）创建一个FutureTask对象，传入Callable类型的参数
+    //　　　　　　　　     public FutureTask(Callable<V> callable){……}
+    //    　　　　（3）调用Thread类重载的参数为Runnable的构造器创建Thread对象
+    //　　　　　　　　  将FutureTask作为参数传递
+    //　　　　　　　　  public class FutureTask<V> implements RunnableFuture<V>
+    //　　　　　　　　  public interface RunnableFuture<V> extends Runnable, Future<V>
+    //　　            如何获取返回值？
+    //    　　　　调用FutureTask类的get()方法
+    @Test
+    void Callable() throws InterruptedException, ExecutionException {
+        for (int i = 0; i < 10; i++) {
+            Callable<Integer> implCallable = new ImplCallable();
+            FutureTask<Integer> futureTask = new FutureTask<Integer>(implCallable);
+            new Thread(futureTask).start();
+            System.out.println(Thread.currentThread().getName() + "----" + futureTask.get());
+        }
+        System.out.println(Thread.currentThread().getName());
+    }
+
+    //4.线程池
+    //
+    //Executors类
+
+    //4.1
+    @Test
+    void Executor1(){
+        //使用Executors工具类中的方法创建线程池
+        ExecutorService pool = Executors.newFixedThreadPool(5);
+
+        ThreadPoolDemo demo = new ThreadPoolDemo();
+
+        //为线程池中的线程分配任务,使用submit方法，传入的参数可以是Runnable的实现类，也可以是Callable的实现类
+        for(int i=1;i<=5;i++){
+            pool.submit(demo);
+        }
+
+        //关闭线程池
+        //shutdown ： 以一种平和的方式关闭线程池，在关闭线程池之前，会等待线程池中的所有的任务都结束，不在接受新任务
+        //shutdownNow ： 立即关闭线程池
+        pool.shutdown();
+    }
+    //4.2
+    @Test
+    void Executor2(){
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        for(int i=0;i<5;i++){
+            Future<Integer> future = executorService.submit(new Callable<Integer>() {
+                @Override
+                public Integer call() throws Exception {
+                    int result = 0;
+                    for(int i=0;i<=10;i++){
+                        result += i;
+                    }
+                    return result;
+                }
+            });
+
+            try {
+                System.out.println(Thread.currentThread().getName()+"--"+future.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+
+        executorService.shutdown();
+    }
+
+}
+
+
+//1
+class ExtendsThread extends Thread {
+    @Override
+    public void run() {
+        System.out.println(Thread.currentThread().getName());
+    }
+}
+
+//2
+class ImplRunnable implements Runnable {
+    private volatile int i = 0;
+
+    @Override
+    public void run() {
+        System.out.println(Thread.currentThread().getName() + "--" + i++);
+
+    }
+}
+
+//3
+class ImplCallable implements Callable<Integer> {
+
+    static int result = 0;
+
+    @Override
+    public Integer call() throws Exception {
+        for (int i = 0; i < 10; i++) {
+            result += i;
+        }
+        System.out.println(Thread.currentThread().getName());
+        return result;
+    }
+}
+
+//4
+class ThreadPoolDemo implements Runnable{
+
+    /**多线程的共享数据*/
+    private int i = 0;
+
+    @Override
+    public void run() {
+        while(i<=50){
+            System.out.println(Thread.currentThread().getName()+"---"+ i++);
+        }
+    }
+}

@@ -1,0 +1,7 @@
+@Autowired默认按类型装配（这个注解是属于spring的）
+默认情况下必须要求依赖对象必须存在，如果要允许null值，可以设置它的required属性为false，如：@Autowired(required=false) ，如果我们想使用名称装配可以结合@Qualifier注解进行使用（@Qualifier("名字")）
+
+@Resource 默认按照名字装载，名字找不到，按照类型找
+如果指定name属性，则只会按照名字找
+
+@Autowired自动注解，举个例子吧，一个类，俩个实现类，Autowired就不知道注入哪一个实现类，而Resource有name属性，可以区分。

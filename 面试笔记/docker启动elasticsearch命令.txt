@@ -1,0 +1,33 @@
+先启动elasticsearch，复制到本地
+docker cp ES01:/usr/share/elasticsearch/config/elasticsearch.yml /usr/share/elasticsearch.yml
+
+修改本地配置
+加上，跨域
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+放行，让所有人访问
+#(#去掉)transport.host: 0.0.0.0
+
+先删掉
+docker rm ES01
+
+
+之后，运行
+docker run -di --name=ES01 -p 9200:9200 -p 9300:9300 -v /usr/share/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml  -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" elasticsearch:5.6.8
+
+
+
+find /var/lib/docker/overlay/ -name jvm.options
+
+查找jvm.options文件，找到后进入使用vi命令打开jvm.options如下：
+
+将
+
+-Xms2g 
+-Xmx2g
+修改为
+-Xms512m 
+-Xmx512m 
+
+
+docker装ik分词器百度有
