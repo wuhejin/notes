@@ -62,11 +62,16 @@ java 1995年10月 诞生
 
 jvm进行垃圾回收，对新生区进行垃圾回收（Minor GC）（GC），满了后，在对养老区进行垃圾回收（Full GC）（FGC），都满了后，会抛出异常（OutOfMemoryError）（OOM 堆溢出）
 
+-Xms初始的Heap的大小。
+
+-Xmx最大Heap的大小。
+
+
 八.永久存储区（元空间）
 永久存储区时一个常驻内存区域，用于存放jdk自身所携带的Class，Interface的元数据，也就是说它存储的是运行环境必须的类信息，被装在进次区域的数据是不会被垃圾回收器回收的，关闭JVM才会释放此区域所占用的内存
 8.1元空间与永久代上类似，都是方法区的实现，他们最大区别是：元空间并不在JVM中，而是使用本地内存。元空间有注意有两个参数：
-MetaspaceSize ：初始化元空间大小，控制发生GC阈值  -Xms
-MaxMetaspaceSize ： 限制元空间大小上限，防止异常占用过多物理内存  -Xmx
+MetaspaceSize ：初始化元空间大小，控制发生GC阈值
+MaxMetaspaceSize ： 限制元空间大小上限，防止异常占用过多物理内存 
 
 System.out.println(Runtime.getRuntime().availableProcessors());     获取电脑核数
 System.out.println(Runtime.getRuntime().maxMemory());  单位是字节  获取JVM最大使用内存量（默认1/4内存大小）    -Xmx
